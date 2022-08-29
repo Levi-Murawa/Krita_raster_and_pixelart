@@ -4,5 +4,5 @@ ServiceTypes=Krita/PythonPlugin
 X-KDE-Library=raster
 X-Python-2-Compatible=false
 X-Krita-Manual=Manual.html
-Name=Raster
-Comment=Raster i pixelart
+Name=Raster i pixelart
+Comment=To jest wtyczka do rasteryzacji i PixelArtu

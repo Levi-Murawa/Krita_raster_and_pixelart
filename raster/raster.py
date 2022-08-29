@@ -1,26 +1,38 @@
+from PyQt5.QtWidgets import *
 from krita import *
-from PyQt5.QtWidgets import QWidget, QAction, QMessageBox
 from .funkcje import szachownica, rasteryzacja, losowanie
 
-class Raster(Extension):
+class DockerExample(DockWidget):
 
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Raster i PixelArt")
+        mainWidget = QWidget(self)
+        self.setWidget(mainWidget)
 
-    # Krita.instance() exists, so do any setup work
-    def setup(self):
-        pass
+        popupButton = QPushButton("PopUp", mainWidget)
+        popupButton.clicked.connect(self.popup)
 
-    def system_check(self):
-        # QMessageBox creates quick popup with information
-        messageBox = QMessageBox()
-        messageBox.setInformativeText(Application.version())
-        messageBox.setWindowTitle('System Check')
-        messageBox.setText("Hello! Here is the version of Krita you are using.");
-        messageBox.setStandardButtons(QMessageBox.Close)
-        messageBox.setIcon(QMessageBox.Information)
-        messageBox.exec()
+        szachPrzycisk = QPushButton("Szachownica", mainWidget)
+        szachPrzycisk.clicked.connect(self.szach)
 
+        rastrPrzycisk = QPushButton("Rasteryzacja", mainWidget)
+        rastrPrzycisk.clicked.connect(self.raster)
+
+        losPrzycisk = QPushButton("Losowanie", mainWidget)
+        losPrzycisk.clicked.connect(self.losowanie)
+
+        mainWidget.setLayout(QVBoxLayout())
+        mainWidget.layout().addWidget(popupButton)
+        mainWidget.layout().addWidget(szachPrzycisk)
+        mainWidget.layout().addWidget(rastrPrzycisk)
+        mainWidget.layout().addWidget(losPrzycisk)
+
+    def popup(self):
+
+        QMessageBox.information(QWidget(), "Nazwa okna", "To dziala!")
+
+##--------------------------------------------------------------
     def raster(self):
         width = Krita.instance().activeDocument().width()
         height = Krita.instance().activeDocument().height()
@@ -53,19 +65,9 @@ class Raster(Extension):
         szachownica(width, height, data, 0, 0, 0, 255)
         l.setPixelData(data, 0, 0, width, height)  # copy back to image
         Krita.instance().activeDocument().refreshProjection()  # refresh
+##-----------------------------------------------------------------------
 
+    def canvasChanged(self, canvas):
+        pass
 
-
-    # called after setup(self)
-    def createActions(self, window):
-        #action = window.createAction("", "System Check")
-        #action.triggered.connect(self.system_check)
-
-        action2 = window.createAction("", "Raster")
-        action2.triggered.connect(self.raster)
-
-        #action3 = window.createAction("", "Szachownica")
-        #action3.triggered.connect(self.szach)
-
-        #action4 = window.createAction("", "Losowanie")
-        #action4.triggered.connect(self.losowanie)
+Krita.instance().addDockWidgetFactory(DockWidgetFactory("Rasteryzacja", DockWidgetFactoryBase.DockRight, DockerExample))
